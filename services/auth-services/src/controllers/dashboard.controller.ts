@@ -1,4 +1,4 @@
-// src/controllers/dashboard.controller.ts
+
 import type { Request, Response, NextFunction } from "express";
 import { User } from "../models/user.model.js";
 import { Job } from "../models/job.model.js";
