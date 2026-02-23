@@ -1,14 +1,27 @@
-import "dotenv/config";
+// src/config/env.ts
 import { z } from "zod";
 
-const EnvSchema = z.object({
-  PORT: z.coerce.number().default(5001),
+const envSchema = z.object({
+  NODE_ENV: z.string().optional(),
+  PORT: z.coerce.number().default(3000),
+
+  // examples — adjust to your real vars:
+  JWT_SECRET: z.string().min(1, "JWT_SECRET is required"),
   MONGO_URI: z.string().min(1, "MONGO_URI is required"),
-
-  JWT_SECRET: z.string().min(10, "JWT_SECRET must be at least 10 chars"),
-  JWT_EXPIRES_IN: z.string().min(1).default("7d"),
-
-  CORS_ORIGIN: z.string().default("*"),
+  // ...
 });
 
-export const ENV = EnvSchema.parse(process.env);
+export const env = (() => {
+  const res = envSchema.safeParse(process.env);
+
+  if (!res.success) {
+    console.error("❌ Invalid environment variables:");
+    console.error(res.error.flatten().fieldErrors);
+    console.error(res.error.flatten().formErrors);
+    // optional: print issues list
+    console.error(res.error.issues);
+    throw new Error("Invalid environment variables");
+  }
+
+  return res.data;
+})();
