@@ -16,13 +16,23 @@ app.use(helmet());
 
 app.use(
   cors({
-    origin: [
-      "https://job-finder-application.vercel.app/",
-      "http://localhost:5173",
-      "*",
-    ],
+    origin: (origin, cb) => {
+      const allowed = [
+        "https://job-finder-application.vercel.app",
+        "http://localhost:5173",
+      ];
+      if (!origin) return cb(null, true);
+
+      if (allowed.includes(origin)) return cb(null, true);
+
+      return cb(new Error(`CORS blocked for origin: ${origin}`));
+    },
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
+
+app.options("*", cors());
 app.use(express.json());
 app.use(morgan("dev"));
 
