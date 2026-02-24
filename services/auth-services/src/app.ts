@@ -13,7 +13,16 @@ import userRoutes from "./routes/user.routes.js";
 export const app = express();
 
 app.use(helmet());
-app.use(cors({ origin: env.CORS_ORIGIN === "*" ? true : env.CORS_ORIGIN }));
+
+app.use(
+  cors({
+    origin: [
+      "https://job-finder-application.vercel.app/",
+      "http://localhost:5173",
+      "*",
+    ],
+  }),
+);
 app.use(express.json());
 app.use(morgan("dev"));
 
